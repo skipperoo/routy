@@ -45,5 +45,5 @@ jobs:
       - name: Run linter
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v2.27.0
           args: run ./...
+
