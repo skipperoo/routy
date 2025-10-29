@@ -33,7 +33,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/yourusername/routy"
+	"github.com/skipperoo/routy"
 )
 
 func main() {
