@@ -1,6 +1,6 @@
 # routy
 
-`routy` is a lightweight, composable HTTP router built on top of Go’s standard [`net/http`](https://pkg.go.dev/net/http) package.  
+`routy` is a lightweight, composable HTTP router built on top of Go’s standard [`net/http`](https://pkg.go.dev/net/http) package.
 It allows you to register handlers, subroutes, and middlewares with a clean, fluent API.
 
 ---
@@ -34,20 +34,20 @@ To create a basic router:
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"github.com/skipperoo/routy"
+    "fmt"
+    "net/http"
+    "github.com/skipperoo/routy"
 )
 
 func main() {
-	router := routy.NewRouter()
+    router := routy.NewRouter()
 
-	router.AddHandler("/hello", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, World!")
-	})
+    router.AddHandler("/hello", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Hello, World!")
+    })
     router.Finalize()
 
-	http.ListenAndServe(":8080", router)
+    http.ListenAndServe(":8080", router)
 }
 
 ```
@@ -56,33 +56,33 @@ You can also specify methods and use path parameters:
 
 ```go
 router.
-	AddHandler("GET /users", getUsers).
-	AddHandler("POST /users", createUser).
-	AddHandler("GET /users/{id}", getUserByID)
+    AddHandler("GET /users", getUsers).
+    AddHandler("POST /users", createUser).
+    AddHandler("GET /users/{id}", getUserByID)
 
 func getUsers(w http.ResponseWriter, r* http.Request) {
     id := r.PathValue("id")
     // Use id
-	fmt.Fprintf(w, "User ID: %s", id)
+    fmt.Fprintf(w, "User ID: %s", id)
 }
 ```
 You can add middlewares and combine them with subroutes:
 ```go
 
 func Auth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		// Validate your token
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        token := r.Header.Get("Authorization")
+        // Validate your token
     })
 }
 
 func main() {
 
-	router := routy.NewRouter()
+    router := routy.NewRouter()
 
-	router.AddHandler("/hello", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, World!")
-	}).
+    router.AddHandler("/hello", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Hello, World!")
+    }).
     AddMiddleware(Logging)
     subRouter := routy.NewRouter().
     AddHandler("/supersecret", func(w http.ResponseWriter, r *http.Request){}).
@@ -94,7 +94,7 @@ func main() {
     router.AddSubroute("/auth/", subRoute)
     router.Finalize()
 
-	http.ListenAndServe(":8080", router)
+    http.ListenAndServe(":8080", router)
 }
 
 ```
@@ -107,22 +107,20 @@ recoverMw := routy.NewRecoverMiddleware(nil)
 
 type LoggingFunction func(format string, v ...any)
 func logToFile(format string, a ...any) {
-	f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+    f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
 
-	_, err = fmt.Fprintf(f, format, a...)
+    _, err = fmt.Fprintf(f, format, a...)
 }
 loggingMw := routy.NewLoggingMiddleware(logToFile)
 
 router.
-	AddMiddleware(recoverMw.GetMiddleware()).
-	AddMiddleware(loggingMw.GetMiddleware()).
-	AddHandler("GET /ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "pong")
-	})
+    AddMiddleware(recoverMw.GetMiddleware()).
+    AddMiddleware(loggingMw.GetMiddleware()).
+    AddHandler("GET /ping", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "pong")
+    })
 ```
-
-
