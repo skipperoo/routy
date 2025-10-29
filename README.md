@@ -90,7 +90,7 @@ func main() {
     Finalize()
 
     // Now /hello will be public, while /auth/* will be protected,
-    // while both will use the Loggin middleware
+    // while both will use the Logging middleware
     router.AddSubroute("/auth/", subRoute)
     router.Finalize()
 
