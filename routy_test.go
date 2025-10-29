@@ -40,6 +40,21 @@ func TestAddHandler(t *testing.T) {
 	}
 }
 
+func TestPathParameter(t *testing.T) {
+	r := NewRouter()
+	r.AddHandler("/hello/{name}", func(w http.ResponseWriter, r *http.Request) {
+		name := r.PathValue("name")
+		w.Write([]byte(name))
+	})
+
+	handler := r.Finalize()
+
+	body := makeRequest(t, handler, http.MethodGet, "/hello/routy")
+	if body != "routy" {
+		t.Fatalf("expected body 'routy', got %q", body)
+	}
+}
+
 func TestMiddlewareOrder(t *testing.T) {
 	var order []string
 
