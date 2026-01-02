@@ -124,3 +124,22 @@ router.
         fmt.Fprintln(w, "pong")
     })
 ```
+
+Note on the `LoggingMiddleware`: `v` contains `[ StatusCode: int, Method: string, UrlPath: string, ReqDurartion: Duration]`.
+This means that you can create custom loggers that change the message format based on the request:
+
+```go
+func BasicLogger(fmtStr string, args ...any) {
+	prefix := "INFO"
+	if statusCode, ok := args[0].(int); ok {
+		if statusCode < 400 {
+			prefix = "INFO"
+		} else if statusCode < 500 {
+			prefix = "WARNING"
+		} else {
+			prefix = "ERROR"
+		}
+	}
+	fmt.Printf("[ %s ] - "+fmtStr+"\n", append([]any{prefix}, args...)...)
+}
+```
